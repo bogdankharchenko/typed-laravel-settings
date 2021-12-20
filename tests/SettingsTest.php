@@ -90,9 +90,7 @@ class SettingsBaseTest extends BaseTestCase
         ]);
 
         // Test
-        $user->getSettings(function (ComplexSetting $structure) {
-            return $structure;
-        });
+        $user->getSettings(ComplexSetting::class);
 
         $this->assertTrue(Cache::driver('array')->has($key));
 
