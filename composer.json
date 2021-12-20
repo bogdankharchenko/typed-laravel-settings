@@ -1,0 +1,35 @@
+{
+  "name": "bogdankharchenko/typed-laravel-settings",
+  "description": "Strongly typed laravel settings.",
+  "type": "library",
+  "version": "1.0",
+  "license": "MIT",
+  "require": {
+    "php": "^7.4|^8.0",
+    "illuminate/support": "8.*",
+    "illuminate/database": "^8.73"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5",
+    "orchestra/testbench": "^6.23",
+    "friendsofphp/php-cs-fixer": "^3.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "BogdanKharchenko\\Settings\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "BogdanKharchenko\\Settings\\Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "stable",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "BogdanKharchenko\\Settings\\Providers\\SettingsServiceProvider"
+      ]
+    }
+  }
+}
