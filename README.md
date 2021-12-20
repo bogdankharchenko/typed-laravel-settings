@@ -71,5 +71,11 @@ return [
 ];
 ```
 
+#### Scopes
+Sometimes you may need to check a setting on a database level, there is a helper scope available.
+```php
 
-
+$users = User::query()
+    ->whereSettings(UserSettings::class, 'favoriteColor', 'blue')
+    ->get();
+```
