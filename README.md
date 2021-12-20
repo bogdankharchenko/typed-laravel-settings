@@ -6,17 +6,6 @@
 composer require bogdankharchenko/typed-laravel-settings
 ```
 
-#### Creating a Setting Class
-
-```php
-use \BogdanKharchenko\Settings\BaseSettings;
-
-class UserSettings extends BaseSettings
-{
-    public string $favoriteColor = 'red';
-}
-```
-
 #### Model Setup
 
 ```php
@@ -31,8 +20,21 @@ class User extends Model
 }
 ```
 
-#### Set Settings
+#### Creating a Setting Class
 
+Public properties and their values will automatically be serialized into a json column, and serve as defaults.
+
+```php
+use \BogdanKharchenko\Settings\BaseSettings;
+
+class UserSettings extends BaseSettings
+{
+    public string $favoriteColor = 'red';
+}
+```
+
+#### Set Settings
+Changing the values will persist them into the database.
 ```php
 
 /** @var \App\Models\User $user */
@@ -44,7 +46,7 @@ $user->setSettings(function(UserSettings $settings){
 ```
 
 #### Get Settings
-
+When a setting is retrieved from the database, it will overwrite the default setting.
 ```php
 /** @var \App\Models\User $user */
 $user = User::first();
@@ -72,7 +74,9 @@ return [
 ```
 
 #### Scopes
+
 Sometimes you may need to check a setting on a database level, there is a helper scope available.
+
 ```php
 
 $users = User::query()
