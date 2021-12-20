@@ -11,8 +11,8 @@ composer require bogdankharchenko/typed-laravel-settings
 ```php
 namespace App\Models\User;
 
-use \Illuminate\Database\Eloquent\Model;
-use \BogdanKharchenko\Settings\Models\HasSettings;
+use Illuminate\Database\Eloquent\Model;
+use BogdanKharchenko\Settings\Models\HasSettings;
 
 class User extends Model
 {
@@ -25,7 +25,7 @@ class User extends Model
 Public properties and their values will automatically be serialized into a json column, and serve as defaults.
 
 ```php
-use \BogdanKharchenko\Settings\BaseSettings;
+use BogdanKharchenko\Settings\BaseSettings;
 
 class UserSettings extends BaseSettings
 {
@@ -34,7 +34,9 @@ class UserSettings extends BaseSettings
 ```
 
 #### Set Settings
-Changing the values will persist them into the database.
+
+Changing the values will persist them into the database. When updating settings, cache will automatically be flushed.
+
 ```php
 
 /** @var \App\Models\User $user */
@@ -46,7 +48,9 @@ $user->setSettings(function(UserSettings $settings){
 ```
 
 #### Get Settings
+
 When a setting is retrieved from the database, it will overwrite the default setting.
+
 ```php
 /** @var \App\Models\User $user */
 $user = User::first();
