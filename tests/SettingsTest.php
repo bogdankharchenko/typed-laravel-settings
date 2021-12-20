@@ -9,11 +9,10 @@ use Illuminate\Support\Facades\Cache;
 
 class SettingsBaseTest extends BaseTestCase
 {
-
     public function test_complex_data_types(): void
     {
         config([
-            'typed-settings.morph'         => [
+            'typed-settings.morph' => [
                 'complex' => ComplexSetting::class,
             ],
             'typed-settings.cache.enabled' => false,
@@ -51,12 +50,11 @@ class SettingsBaseTest extends BaseTestCase
         //$this->assertTrue($user->exists());
     }
 
-
     public function test_settings_can_be_set_with_closure(): void
     {
         config([ 'typed-settings.morph' => [ 'complex' => ComplexSetting::class ] ]);
 
-        $this->getUser()->setSettings(function(ComplexSetting $complex) {
+        $this->getUser()->setSettings(function (ComplexSetting $complex) {
             $complex->filling = 'cherry';
             $complex->pi = 22.22;
             $complex->ingredients = [ 'cherry', 'eggs', 'butter' ];
@@ -72,14 +70,13 @@ class SettingsBaseTest extends BaseTestCase
         $this->assertTrue($complex->isReady);
     }
 
-
     public function test_settings_are_cachable_and_cache_is_cleared_when_settings_are_updated(): void
     {
         config([ 'typed-settings.morph' => [ 'complex' => ComplexSetting::class ] ]);
         config([
             'typed-settings.cache' => [
                 'enabled' => true,
-                'driver'  => 'array',
+                'driver' => 'array',
                 'seconds' => 30,
             ],
         ]);
@@ -93,19 +90,18 @@ class SettingsBaseTest extends BaseTestCase
         ]);
 
         // Test
-        $user->getSettings(function(ComplexSetting $structure) {
+        $user->getSettings(function (ComplexSetting $structure) {
             return $structure;
         });
 
         $this->assertTrue(Cache::driver('array')->has($key));
 
-        $user->setSettings(function(ComplexSetting $complex) {
+        $user->setSettings(function (ComplexSetting $complex) {
             $complex->filling = 'cherry';
         });
 
         $this->assertFalse(Cache::driver('array')->has($key));
     }
-
 
     protected function getUser(): User
     {
@@ -118,6 +114,5 @@ class SettingsBaseTest extends BaseTestCase
 
 class User extends Model
 {
-
     use HasSettings;
 }

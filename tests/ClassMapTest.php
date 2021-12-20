@@ -16,5 +16,4 @@ class ClassMapTest extends BaseTestCase
         $this->assertEquals('complex', $map::getKeyFromClass(ComplexSetting::class));
         $this->assertEquals(ComplexSetting::class, $map::getClassFromKey('complex'));
     }
-
 }

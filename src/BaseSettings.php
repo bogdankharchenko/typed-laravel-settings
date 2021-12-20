@@ -10,7 +10,6 @@ use ReflectionProperty;
 
 abstract class BaseSettings implements Arrayable
 {
-
     use CachesSettings;
 
     protected Model $model;
@@ -18,7 +17,6 @@ abstract class BaseSettings implements Arrayable
     protected array $defaultSettings = [];
 
     protected bool $wasRecentlySaved = false;
-
 
     public function __construct(Model $model)
     {
@@ -33,7 +31,6 @@ abstract class BaseSettings implements Arrayable
         $this->loadSettings();
     }
 
-
     public function saveSettings(): void
     {
         $this->model->settings()->updateOrCreate([
@@ -47,27 +44,26 @@ abstract class BaseSettings implements Arrayable
         $this->forgetCurrentModelSetting();
     }
 
-
     protected function loadSettings(): void
     {
-        $settings = $this->cacheSettings(function() {
-            return $this->model->settings()->where('class',
-                    ClassMorphMap::getKeyFromClass($this))->first()->payload ?? [];
+        $settings = $this->cacheSettings(function () {
+            return $this->model->settings()->where(
+                'class',
+                ClassMorphMap::getKeyFromClass($this)
+            )->first()->payload ?? [];
         });
 
         $this->fillProperties($settings);
     }
 
-
     protected function getReflectedProperties(): array
     {
         $properties = new Collection((new ReflectionClass($this))->getProperties(ReflectionProperty::IS_PUBLIC));
 
-        return $properties->mapWithKeys(function(ReflectionProperty $property) {
+        return $properties->mapWithKeys(function (ReflectionProperty $property) {
             return [ $property->getName() => $property->getValue($this) ];
         })->toArray();
     }
-    
 
     protected function fillProperties(array $properties = []): self
     {
@@ -80,12 +76,10 @@ abstract class BaseSettings implements Arrayable
         return $this;
     }
 
-
     public function wasRecentlySaved(): bool
     {
         return $this->wasRecentlySaved;
     }
-
 
     public function toArray(): array
     {
