@@ -7,23 +7,26 @@ use Orchestra\Testbench\TestCase;
 
 class BaseTestCase extends TestCase
 {
+
     protected function getEnvironmentSetUp($app)
     {
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
-            'driver' => 'sqlite',
+            'driver'   => 'sqlite',
             'database' => ':memory:',
-            'prefix' => '',
+            'prefix'   => '',
         ]);
     }
 
+
     protected function defineDatabaseMigrations()
     {
-        $this->artisan('migrate', ['--database' => 'testing']);
+        $this->loadLaravelMigrations();
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
-        include_once __DIR__ . '/../database/migrations/2021_10_12_090425_set_up_settings_module.php';
-        (new \SetUpSettingsModule())->up();
+        $this->artisan('migrate', [ '--database' => 'testbench' ]);
     }
+
 
     protected function getPackageProviders($app)
     {

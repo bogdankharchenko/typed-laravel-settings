@@ -54,7 +54,7 @@ trait HasSettings
             $builder->where('class', $class);
 
             $builder->where(function (Builder $builder) use ($name, $operator, $value) {
-                $builder->where("payload->{$name}", $operator ?? '=', $value ?? $operator);
+                $builder->where("payload->{$name}", $operator ?? '=', $value);
             });
         });
 
