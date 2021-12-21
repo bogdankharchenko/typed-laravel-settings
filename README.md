@@ -1,3 +1,6 @@
+[![run-tests](https://github.com/bogdankharchenko/typed-laravel-settings/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/bogdankharchenko/typed-laravel-settings/actions/workflows/run-tests.yml)
+[![codecov](https://codecov.io/gh/bogdankharchenko/typed-laravel-settings/branch/main/graph/badge.svg?token=8OSEIM0L18)](https://codecov.io/gh/bogdankharchenko/typed-laravel-settings)
+
 ### Strongly Typed Laravel Settings
 
 #### Install
