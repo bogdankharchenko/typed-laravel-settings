@@ -13,8 +13,10 @@ class SettingsServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
+
         $this->publishes([
-            __DIR__.'/../config/typed-settings.php' => config_path('typed-settings.php'),
+            __DIR__.'/../../config/typed-settings.php' => config_path('typed-settings.php'),
         ]);
     }
 }
