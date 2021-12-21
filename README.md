@@ -38,26 +38,49 @@ class UserSettings extends BaseSettings
 Changing the values will persist them into the database. When updating settings, cache will automatically be flushed.
 
 ```php
-
-/** @var \App\Models\User $user */
 $user = User::first();
 
 $user->setSettings(function(UserSettings $settings){
        $settings->favoriteColor = 'blue';
 });
+
+// Multiple Settings
+
+$user->setSettings(function(UserSettings $settings, EmailPreferences $emailPreferences){
+       $settings->favoriteColor = 'blue';
+       $emailPreferences->marketing = false;
+});
+
+// Using the `setSettings()` Closure is a wrapper around the code example below.
+$settings = new UserSettings($user);
+$settings->favoriteColor = 'pink';
+$settings->saveSettings();
+
+
 ```
 
 #### Get Settings
 
 When a setting is retrieved from the database, it will overwrite the default setting.
+Create a helper function on your model, which allows us to access strongly typed settings.
 
 ```php
-/** @var \App\Models\User $user */
-$user = User::first();
+class User extends Model 
+{
+    public function config(): UserSettings
+    {
+        return new UserSettings($this);      
+    }
+}
 
+$user->config()->favoriteColor // returns blue
+
+// Alternatively you can use docblocks to assist in typing
+/** @var UserSettings $settings */
 $settings = $user->getSettings(UserSettings::class);
 
 $settings->favoriteColor // returns blue
+
 ```
 
 #### Morph Map & Caching

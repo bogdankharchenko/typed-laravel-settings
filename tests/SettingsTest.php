@@ -4,15 +4,17 @@ namespace BogdanKharchenko\Settings\Tests;
 
 use BogdanKharchenko\Settings\Models\HasSettings;
 use BogdanKharchenko\Settings\Tests\Fixtures\ComplexSetting;
+use BogdanKharchenko\Settings\Tests\Fixtures\SimpleSetting;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 class SettingsBaseTest extends BaseTestCase
 {
+
     public function test_complex_data_types(): void
     {
         config([
-            'typed-settings.morph' => [
+            'typed-settings.morph'         => [
                 'complex' => ComplexSetting::class,
             ],
             'typed-settings.cache.enabled' => false,
@@ -50,11 +52,12 @@ class SettingsBaseTest extends BaseTestCase
         //$this->assertTrue($user->exists());
     }
 
+
     public function test_settings_can_be_set_with_closure(): void
     {
         config([ 'typed-settings.morph' => [ 'complex' => ComplexSetting::class ] ]);
 
-        $this->getUser()->setSettings(function (ComplexSetting $complex) {
+        $this->getUser()->setSettings(function(ComplexSetting $complex) {
             $complex->filling = 'cherry';
             $complex->pi = 22.22;
             $complex->ingredients = [ 'cherry', 'eggs', 'butter' ];
@@ -70,13 +73,14 @@ class SettingsBaseTest extends BaseTestCase
         $this->assertTrue($complex->isReady);
     }
 
+
     public function test_settings_are_cachable_and_cache_is_cleared_when_settings_are_updated(): void
     {
         config([ 'typed-settings.morph' => [ 'complex' => ComplexSetting::class ] ]);
         config([
             'typed-settings.cache' => [
                 'enabled' => true,
-                'driver' => 'array',
+                'driver'  => 'array',
                 'seconds' => 30,
             ],
         ]);
@@ -94,12 +98,38 @@ class SettingsBaseTest extends BaseTestCase
 
         $this->assertTrue(Cache::driver('array')->has($key));
 
-        $user->setSettings(function (ComplexSetting $complex) {
+        $user->setSettings(function(ComplexSetting $complex) {
             $complex->filling = 'cherry';
         });
 
         $this->assertFalse(Cache::driver('array')->has($key));
     }
+
+
+    public function test_you_may_pass_multiple_closures_when_setting(): void
+    {
+        $user = $this->getUser();
+
+        config([
+            'typed-settings.morph'         => [
+                'complex' => ComplexSetting::class,
+                'simplex' => SimpleSetting::class,
+            ],
+            'typed-settings.cache.enabled' => false,
+        ]);
+
+        $user->setSettings(function(SimpleSetting $simple, ComplexSetting $complex) {
+            $simple->favoriteColor = 'blue';
+            $complex->filling = 'cherry';
+        });
+
+        $simple = new SimpleSetting($user);
+        $this->assertEquals('blue', $simple->favoriteColor);
+
+        $complex = new ComplexSetting($user);
+        $this->assertEquals('cherry', $complex->filling);
+    }
+
 
     protected function getUser(): User
     {
@@ -112,5 +142,6 @@ class SettingsBaseTest extends BaseTestCase
 
 class User extends Model
 {
+
     use HasSettings;
 }

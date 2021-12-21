@@ -16,7 +16,7 @@ class BaseTestCase extends TestCase
             'prefix' => '',
         ]);
     }
-    
+
     protected function defineDatabaseMigrations()
     {
         $this->artisan('migrate', ['--database' => 'testing']);

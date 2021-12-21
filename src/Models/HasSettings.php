@@ -11,6 +11,7 @@ use Illuminate\Support\Traits\ReflectsClosures;
 
 trait HasSettings
 {
+
     use ReflectsClosures;
 
     public function settings(): MorphMany
@@ -18,35 +19,45 @@ trait HasSettings
         return $this->morphMany(Setting::class, 'settable');
     }
 
-    public function setSettings(?Closure $closure = null): self
+
+    public function setSettings(Closure $closure): self
     {
-        $class = $this->firstClosureParameterType($closure);
+        $closureParameterTypes = $this->closureParameterTypes($closure);
 
-        /** @var BaseSettings $setting */
-        $setting = new $class($this);
+        $settings = [];
 
-        $closure($setting);
+        foreach ($closureParameterTypes as $key => $class) {
+            /** @var BaseSettings $setting */
+            $settings[] = new $class($this);
+        }
 
-        if (false === $setting->wasRecentlySaved()) {
-            $setting->saveSettings();
+        $closure(...$settings);
+
+        /** @var BaseSettings $baseSetting */
+        foreach ($settings as $baseSetting) {
+            if (false === $baseSetting->wasRecentlySaved()) {
+                $baseSetting->saveSettings();
+            }
         }
 
         return $this;
     }
+
 
     public function getSettings($class)
     {
         return new $class($this);
     }
 
+
     public function scopeWhereSettings(Builder $builder, $class, $name, $operator, $value = null)
     {
         $class = ClassMorphMap::getKeyFromClass($class);
 
-        $builder->whereHas('settings', function ($builder) use ($class, $name, $operator, $value) {
+        $builder->whereHas('settings', function($builder) use ($class, $name, $operator, $value) {
             $builder->where('class', $class);
 
-            $builder->where(function (Builder $builder) use ($name, $operator, $value) {
+            $builder->where(function(Builder $builder) use ($name, $operator, $value) {
                 $builder->where("payload->{$name}", $operator ?? '=', $value ?? $operator);
             });
         });
