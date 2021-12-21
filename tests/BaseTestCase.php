@@ -7,17 +7,15 @@ use Orchestra\Testbench\TestCase;
 
 class BaseTestCase extends TestCase
 {
-
     protected function getEnvironmentSetUp($app)
     {
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
     }
-
 
     protected function defineDatabaseMigrations()
     {
@@ -26,7 +24,6 @@ class BaseTestCase extends TestCase
 
         $this->artisan('migrate', [ '--database' => 'testbench' ]);
     }
-
 
     protected function getPackageProviders($app)
     {
