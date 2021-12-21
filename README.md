@@ -41,14 +41,13 @@ Changing the values will persist them into the database. When updating settings,
 $user = User::first();
 
 $user->setSettings(function(UserSettings $settings){
-       $settings->favoriteColor = 'blue';
+    $settings->favoriteColor = 'blue';
 });
 
-// Multiple Settings
-
+// Updating Multiple Settings
 $user->setSettings(function(UserSettings $settings, EmailPreferences $emailPreferences){
-       $settings->favoriteColor = 'blue';
-       $emailPreferences->marketing = false;
+    $settings->favoriteColor = 'blue';
+    $emailPreferences->marketing = false;
 });
 
 // Using the `setSettings()` Closure is a wrapper around the code example below.
@@ -76,6 +75,7 @@ class User extends Model
 $user->config()->favoriteColor // returns blue
 
 // Alternatively you can use docblocks to assist in typing
+
 /** @var UserSettings $settings */
 $settings = $user->getSettings(UserSettings::class);
 
