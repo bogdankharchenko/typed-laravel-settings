@@ -37,7 +37,7 @@ abstract class BaseSettings implements Arrayable
         $this->model->settings()->updateOrCreate([
             'class' => ClassMorphMap::getKeyFromClass($this),
         ], [
-            'payload' => $this->toArray(),
+            'payload' => $this->getReflectedProperties(),
         ]);
 
         $this->wasRecentlySaved = true;
@@ -65,7 +65,7 @@ abstract class BaseSettings implements Arrayable
             $name = $property->getName();
             $value = $property->getValue($this);
 
-            if($this->isEncrypted($name)) {
+            if($this->isUsingEncryption($name)) {
                 $value = $this->encryptSetting($value);
             }
 
@@ -79,7 +79,7 @@ abstract class BaseSettings implements Arrayable
         foreach ($properties as $name => $value) {
             if (array_key_exists($name, $this->defaultSettings)) {
 
-                if($this->isEncrypted($name)){
+                if($this->isUsingEncryption($name)){
                     $value = $this->decryptSetting($value);
                 }
 
