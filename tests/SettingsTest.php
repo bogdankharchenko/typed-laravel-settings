@@ -100,7 +100,7 @@ class SettingsBaseTest extends BaseTestCase
             'typed-settings.cache' => [
                 'enabled' => true,
                 'store' => 'array',
-                'seconds'=> 30,
+                'seconds' => 30,
             ],
         ]);
 
