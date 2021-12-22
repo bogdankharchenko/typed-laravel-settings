@@ -11,6 +11,7 @@ use ReflectionProperty;
 abstract class BaseSettings implements Arrayable
 {
     use CachesSettings;
+    use EncryptsSettings;
 
     protected Model $model;
 
@@ -61,14 +62,27 @@ abstract class BaseSettings implements Arrayable
         $properties = new Collection((new ReflectionClass($this))->getProperties(ReflectionProperty::IS_PUBLIC));
 
         return $properties->mapWithKeys(function (ReflectionProperty $property) {
-            return [ $property->getName() => $property->getValue($this) ];
-        })->toArray();
+            $name = $property->getName();
+            $value = $property->getValue($this);
+
+            if($this->isEncrypted($name)) {
+                $value = $this->encryptSetting($value);
+            }
+
+            return [ $name => $value ];
+        })
+            ->toArray();
     }
 
     protected function fillProperties(array $properties = []): self
     {
         foreach ($properties as $name => $value) {
             if (array_key_exists($name, $this->defaultSettings)) {
+
+                if($this->isEncrypted($name)){
+                    $value = $this->decryptSetting($value);
+                }
+
                 $this->{$name} = $value;
             }
         }
