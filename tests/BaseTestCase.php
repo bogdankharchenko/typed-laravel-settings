@@ -7,27 +7,25 @@ use Orchestra\Testbench\TestCase;
 
 class BaseTestCase extends TestCase
 {
-
     protected function getEnvironmentSetUp($app)
     {
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
 
         $app['config']->set('cache.stores.redis', [
-            'driver'     => 'redis',
+            'driver' => 'redis',
             'connection' => 'cache',
         ]);
 
         $app['config']->set('cache.stores.array', [
-            'driver'     => 'array',
+            'driver' => 'array',
             'connection' => 'cache',
         ]);
     }
-
 
     protected function defineDatabaseMigrations()
     {
@@ -36,7 +34,6 @@ class BaseTestCase extends TestCase
 
         $this->artisan('migrate', [ '--database' => 'testbench' ]);
     }
-
 
     protected function getPackageProviders($app)
     {
