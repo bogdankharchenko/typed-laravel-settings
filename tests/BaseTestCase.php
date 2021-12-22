@@ -15,6 +15,16 @@ class BaseTestCase extends TestCase
             'database' => ':memory:',
             'prefix' => '',
         ]);
+
+        $app['config']->set('cache.stores.redis', [
+            'driver' => 'redis',
+            'connection' => 'cache',
+        ]);
+
+        $app['config']->set('cache.stores.array', [
+            'driver' => 'array',
+            'connection' => 'cache',
+        ]);
     }
 
     protected function defineDatabaseMigrations()
