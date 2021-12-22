@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Crypt;
 
 trait EncryptsSettings
 {
-
     protected function encryptSetting($value): string
     {
         return Crypt::encrypt($value);

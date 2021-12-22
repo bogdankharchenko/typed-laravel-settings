@@ -6,7 +6,6 @@ use BogdanKharchenko\Settings\BaseSettings;
 
 class EncryptedSetting extends BaseSettings
 {
-
     protected array $encrypted = [
         'secret',
         'list',
