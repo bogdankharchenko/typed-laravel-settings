@@ -97,7 +97,7 @@ return [
     ],
     'cache' => [
         'enabled' => true,
-        'driver' => 'redis',
+        'store' => 'redis',
         'seconds' => 600,
     ],
 ];

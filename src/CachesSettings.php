@@ -13,9 +13,9 @@ trait CachesSettings
         return (bool)config('typed-settings.cache.enabled');
     }
 
-    protected function cacheDriver(): ?string
+    protected function cacheStore(): ?string
     {
-        return config('typed-settings.cache.driver');
+        return config('typed-settings.cache.store');
     }
 
     protected function cacheSeconds(): int
@@ -39,7 +39,7 @@ trait CachesSettings
 
     protected function cache(): Repository
     {
-        return Cache::driver($this->cacheDriver());
+        return Cache::store($this->cacheStore());
     }
 
     protected function cacheSettings(Closure $closure)
