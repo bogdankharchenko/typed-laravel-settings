@@ -65,7 +65,7 @@ abstract class BaseSettings implements Arrayable
             $name = $property->getName();
             $value = $property->getValue($this);
 
-            if($this->isUsingEncryption($name)) {
+            if ($this->isUsingEncryption($name)) {
                 $value = $this->encryptSetting($value);
             }
 
@@ -78,8 +78,7 @@ abstract class BaseSettings implements Arrayable
     {
         foreach ($properties as $name => $value) {
             if (array_key_exists($name, $this->defaultSettings)) {
-
-                if($this->isUsingEncryption($name)){
+                if ($this->isUsingEncryption($name)) {
                     $value = $this->decryptSetting($value);
                 }
 
