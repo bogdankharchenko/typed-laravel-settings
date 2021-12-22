@@ -102,7 +102,7 @@ class SettingsBaseTest extends BaseTestCase
         config([
             'typed-settings.cache' => [
                 'enabled' => true,
-                'driver' => 'array',
+                'store' => 'array',
                 'seconds' => 30,
             ],
         ]);
@@ -118,13 +118,13 @@ class SettingsBaseTest extends BaseTestCase
         // Test
         $user->getSettings(ComplexSetting::class);
 
-        $this->assertTrue(Cache::driver('array')->has($key));
+        $this->assertTrue(Cache::store('array')->has($key));
 
         $user->setSettings(function (ComplexSetting $complex) {
             $complex->filling = 'cherry';
         });
 
-        $this->assertFalse(Cache::driver('array')->has($key));
+        $this->assertFalse(Cache::store('array')->has($key));
     }
 
     public function test_you_may_pass_multiple_closures_when_setting(): void
