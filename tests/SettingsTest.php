@@ -42,6 +42,9 @@ class SettingsBaseTest extends BaseTestCase
         $this->assertEquals([ 'cherry', 'eggs', 'butter' ], $complex->ingredients);
         $this->assertEquals(145, $complex->totalPies);
         $this->assertTrue($complex->isReady);
+
+        // Test getModel returns an instance of our user.
+        $this->assertTrue($complex->getModel()->is($this->getUser()));
     }
 
     public function test_where_setting_scope(): void

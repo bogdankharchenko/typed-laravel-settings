@@ -81,6 +81,11 @@ abstract class BaseSettings implements Arrayable
         return $this->wasRecentlySaved;
     }
 
+    public function getModel(): Model
+    {
+        return $this->model;
+    }
+
     public function toArray(): array
     {
         return $this->getReflectedProperties();
