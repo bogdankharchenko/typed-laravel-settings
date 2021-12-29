@@ -68,7 +68,7 @@ abstract class BaseSettings implements Arrayable
             $value = $property->getValue($this);
 
             if ($this->isUsingEncryption($name)) {
-                $value = $this->encryptSetting($value);
+                $value = $this->encrypter->encrypt($value);
             }
 
             return [ $name => $value ];
@@ -81,7 +81,7 @@ abstract class BaseSettings implements Arrayable
         foreach ($properties as $name => $value) {
             if (array_key_exists($name, $this->defaultSettings)) {
                 if ($this->isUsingEncryption($name)) {
-                    $value = $this->decryptSetting($value);
+                    $value = $this->encrypter->decrypt($value);
                 }
 
                 $this->{$name} = $value;
@@ -104,5 +104,10 @@ abstract class BaseSettings implements Arrayable
     public function toArray(): array
     {
         return $this->getReflectedProperties();
+    }
+
+    public function getDefaultSettings(): array
+    {
+        return $this->defaultSettings;
     }
 }

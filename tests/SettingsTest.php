@@ -48,6 +48,9 @@ class SettingsBaseTest extends BaseTestCase
 
         // Test getModel returns an instance of our user.
         $this->assertTrue($complex->getModel()->is($this->getUser()));
+
+        $this->assertEquals(3.14, $complex->getDefaultSettings()['pi']);
+        $this->assertEquals('apple', $complex->getDefaultSettings()['filling']);
     }
 
     public function test_where_setting_scope(): void
