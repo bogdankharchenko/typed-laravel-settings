@@ -114,10 +114,12 @@ class UserSettings extends BaseSettings
 }
 ```
 
+The default encrypter is `BogdanKharchenko\Settings\Repository\Encrypter` but you may choose to implement your own encryption strategy by implementing `BogdanKharchenko\Settings\Contracts\SettingEncrypterInterface` and changing the config.
+
 #### Morph Map & Caching
 Similarly to morph map for Eloquent, it is a good idea to allow your Setting be more flexible to restructuring without touching your database.
 ```php
-typed-settings.php
+// config/typed-settings.php
 
 return [
     'morph'=>[
@@ -128,6 +130,8 @@ return [
         'store' => 'redis',
         'seconds' => 600,
     ],
+    
+   'encrypter' => \BogdanKharchenko\Settings\Repository\Encrypter::class,
 ];
 ```
 

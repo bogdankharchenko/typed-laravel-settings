@@ -4,12 +4,12 @@ namespace BogdanKharchenko\Settings\Tests;
 
 use BogdanKharchenko\Settings\Models\HasSettings;
 use BogdanKharchenko\Settings\Models\Setting;
+use BogdanKharchenko\Settings\Repository\Encrypter;
 use BogdanKharchenko\Settings\Tests\Fixtures\ComplexSetting;
 use BogdanKharchenko\Settings\Tests\Fixtures\EncryptedSetting;
 use BogdanKharchenko\Settings\Tests\Fixtures\SimpleSetting;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Crypt;
 
 class SettingsBaseTest extends BaseTestCase
 {
@@ -172,9 +172,11 @@ class SettingsBaseTest extends BaseTestCase
         $encrypted->list = ['x', 'y', 'z'];
         $encrypted->saveSettings();
 
+        $defaultEncrypter = new Encrypter();
+
         $setting = Setting::query()->first();
-        $this->assertEquals('abc', Crypt::decrypt($setting->payload['secret']));
-        $this->assertSame(['x','y','z'], Crypt::decrypt($setting->payload['list']));
+        $this->assertEquals('abc', $defaultEncrypter->decrypt($setting->payload['secret']));
+        $this->assertSame(['x','y','z'], $defaultEncrypter->decrypt($setting->payload['list']));
 
         // Fresh Settings
         $encrypted = new EncryptedSetting($this->getUser());

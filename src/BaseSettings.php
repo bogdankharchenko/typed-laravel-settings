@@ -27,6 +27,8 @@ abstract class BaseSettings implements Arrayable
             $this->inheritSettings();
         }
 
+        $this->encryptionSetup();
+
         $this->defaultSettings = $this->getReflectedProperties();
 
         $this->loadSettings();
