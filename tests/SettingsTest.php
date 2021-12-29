@@ -3,7 +3,10 @@
 namespace BogdanKharchenko\Settings\Tests;
 
 use BogdanKharchenko\Settings\Models\HasSettings;
+use BogdanKharchenko\Settings\Models\Setting;
+use BogdanKharchenko\Settings\Repository\Encrypter;
 use BogdanKharchenko\Settings\Tests\Fixtures\ComplexSetting;
+use BogdanKharchenko\Settings\Tests\Fixtures\EncryptedSetting;
 use BogdanKharchenko\Settings\Tests\Fixtures\SimpleSetting;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
@@ -149,6 +152,36 @@ class SettingsBaseTest extends BaseTestCase
 
         $complex = new ComplexSetting($user);
         $this->assertEquals('cherry', $complex->filling);
+    }
+
+    public function test_settings_may_be_encrypted_and_decrypted() : void
+    {
+        config([
+            'typed-settings.cache' => [
+                'enabled' => false,
+            ],
+        ]);
+
+        $encrypted = new EncryptedSetting($this->getUser());
+
+        // Sanity Check
+        $this->assertNull($encrypted->secret);
+        $this->assertSame(['a','b','c'], $encrypted->list);
+
+        $encrypted->secret = 'abc';
+        $encrypted->list = ['x', 'y', 'z'];
+        $encrypted->saveSettings();
+
+        $defaultEncrypter = new Encrypter();
+
+        $setting = Setting::query()->first();
+        $this->assertEquals('abc', $defaultEncrypter->decrypt($setting->payload['secret']));
+        $this->assertSame(['x','y','z'], $defaultEncrypter->decrypt($setting->payload['list']));
+
+        // Fresh Settings
+        $encrypted = new EncryptedSetting($this->getUser());
+        $this->assertEquals('abc', $encrypted->secret);
+        $this->assertEquals(['x','y','z'], $encrypted->list);
     }
 
     protected function getUser(): User

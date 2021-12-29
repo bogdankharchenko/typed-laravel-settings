@@ -9,6 +9,8 @@ class BaseTestCase extends TestCase
 {
     protected function getEnvironmentSetUp($app)
     {
+        $app['config']->set('app.key', 'base64:qRUMF9sMqjvlgHotD/FkjkClPjGjgYNPY6E0NNGNiZM=');
+
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
             'driver' => 'sqlite',

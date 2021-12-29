@@ -25,6 +25,7 @@ class User extends Model
 
 #### Creating a Setting Class
 
+This class represents a group of available settings for a given model.
 Public properties and their values will automatically be serialized into a json column, and serve as defaults.
 
 ```php
@@ -48,14 +49,18 @@ $user->setSettings(function(UserSettings $settings){
 });
 
 // Updating Multiple Settings
+
 $user->setSettings(function(UserSettings $settings, EmailPreferences $emailPreferences){
     $settings->favoriteColor = 'blue';
+
     $emailPreferences->marketing = false;
 });
 
 // Using the `setSettings()` Closure is a wrapper around the code example below.
 $settings = new UserSettings($user);
+
 $settings->favoriteColor = 'pink';
+
 $settings->saveSettings();
 
 
@@ -63,8 +68,9 @@ $settings->saveSettings();
 
 #### Get Settings
 
-When a setting is retrieved from the database, it will overwrite the default setting.
-Create a helper function on your model, which allows us to access strongly typed settings.
+Creating a helper function on your allows us to access strongly typed settings.
+When a setting is retrieved from the database, it will overwrite the default setting on the class.
+
 
 ```php
 class User extends Model 
@@ -86,10 +92,34 @@ $settings->favoriteColor // returns blue
 
 ```
 
-#### Morph Map & Caching
-
+#### Setting Value Encryption
+You may decide to encrypt/decrypt sensitive settings such as secrets.   You should specify a `protected array $encrypted` with a list of properties to encrypt/decrypt. Data will be encrypted in the DB, and decrypted when retrieved.
 ```php
-typed-settings.php
+use BogdanKharchenko\Settings\BaseSettings;
+
+class UserSettings extends BaseSettings
+{
+    protected array $encrypted = [
+        'secret',
+        'list',
+    ];
+
+    public ?string $secret = null;
+
+    public array $list = [
+        'a',
+        'b',
+        'c',
+    ];
+}
+```
+
+The default encrypter is `BogdanKharchenko\Settings\Repository\Encrypter` but you may choose to implement your own encryption strategy by implementing `BogdanKharchenko\Settings\Contracts\SettingEncrypterInterface` and changing the config.
+
+#### Morph Map & Caching
+Similarly to morph map for Eloquent, it is a good idea to allow your Setting be more flexible to restructuring without touching your database.
+```php
+// config/typed-settings.php
 
 return [
     'morph'=>[
@@ -100,6 +130,8 @@ return [
         'store' => 'redis',
         'seconds' => 600,
     ],
+    
+   'encrypter' => \BogdanKharchenko\Settings\Repository\Encrypter::class,
 ];
 ```
 

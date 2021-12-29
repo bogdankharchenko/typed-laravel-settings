@@ -10,4 +10,6 @@ return [
         'store' => 'redis',
         'seconds' => 600,
     ],
+
+    'encrypter' => \BogdanKharchenko\Settings\Repository\Encrypter::class,
 ];
