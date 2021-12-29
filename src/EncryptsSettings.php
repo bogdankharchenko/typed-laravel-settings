@@ -13,9 +13,7 @@ trait EncryptsSettings
 
     protected function encryptionSetup(): void
     {
-        $encrypter = config('typed-settings.encrypter') ?? Encrypter::class;
-
-        $this->encrypter = new $encrypter();
+        $this->encrypter = app('typed-settings.encrypter');
     }
 
     protected function encryptSetting($value): string

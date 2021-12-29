@@ -2,12 +2,19 @@
 
 namespace BogdanKharchenko\Settings\Providers;
 
+use BogdanKharchenko\Settings\Repository\Encrypter;
 use Illuminate\Support\ServiceProvider;
 
 class SettingsServiceProvider extends ServiceProvider
 {
     public function register()
     {
+        $this->app->singleton('typed-settings.encrypter', function ($app) {
+            $encrypter = config('typed-settings.encrypter') ?? Encrypter::class;
+
+            return new $encrypter();
+        });
+
         $this->mergeConfigFrom(__DIR__.'/../../config/typed-settings.php', 'typed-settings');
     }
 
