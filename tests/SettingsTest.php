@@ -207,16 +207,14 @@ class SettingsBaseTest extends BaseTestCase
         ]);
 
         try {
-            $user->setSettings(function(SimpleSettingWithRule $simple) {
+            $user->setSettings(function (SimpleSettingWithRule $simple) {
                 $simple->favoriteColor = 'blue';
             });
-
-        } catch (ValidationException $exception){
+        } catch (ValidationException $exception) {
             $this->assertContains('color does not match', $exception->errors()['favoriteColor']);
 
             $this->assertFalse(Arr::has($exception->errors(), 'leastFavoriteColor'));
         }
-
     }
 
     protected function getUser(): User
