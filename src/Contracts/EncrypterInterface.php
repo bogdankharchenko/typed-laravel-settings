@@ -2,7 +2,7 @@
 
 namespace BogdanKharchenko\Settings\Contracts;
 
-interface SettingEncrypterInterface
+interface EncrypterInterface
 {
     public function encrypt($value);
 
