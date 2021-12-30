@@ -2,13 +2,13 @@
 
 namespace BogdanKharchenko\Settings;
 
-use BogdanKharchenko\Settings\Contracts\SettingEncrypterInterface;
+use BogdanKharchenko\Settings\Contracts\EncrypterInterface;
 
 trait EncryptsSettings
 {
     protected array $encrypted = [];
 
-    protected SettingEncrypterInterface $encrypter;
+    protected EncrypterInterface $encrypter;
 
     protected function encryptionSetup(): void
     {

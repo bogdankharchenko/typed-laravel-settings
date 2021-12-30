@@ -12,4 +12,6 @@ return [
     ],
 
     'encrypter' => \BogdanKharchenko\Settings\Repository\Encrypter::class,
+
+    'validator' => \BogdanKharchenko\Settings\Repository\Validator::class,
 ];

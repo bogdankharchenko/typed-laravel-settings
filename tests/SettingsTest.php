@@ -8,18 +8,29 @@ use BogdanKharchenko\Settings\Repository\Encrypter;
 use BogdanKharchenko\Settings\Tests\Fixtures\ComplexSetting;
 use BogdanKharchenko\Settings\Tests\Fixtures\EncryptedSetting;
 use BogdanKharchenko\Settings\Tests\Fixtures\SimpleSetting;
+use BogdanKharchenko\Settings\Tests\Fixtures\SimpleSettingWithRule;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\ValidationException;
 
 class SettingsBaseTest extends BaseTestCase
 {
+    protected function setUp() : void
+    {
+        parent::setUp();
+
+        config([
+            'typed-settings.cache.enabled' => false,
+        ]);
+    }
+
     public function test_complex_data_types(): void
     {
         config([
             'typed-settings.morph' => [
                 'complex' => ComplexSetting::class,
             ],
-            'typed-settings.cache.enabled' => false,
         ]);
 
         $complex = new ComplexSetting($this->getUser());
@@ -59,7 +70,6 @@ class SettingsBaseTest extends BaseTestCase
             'typed-settings.morph' => [
                 'complex' => ComplexSetting::class,
             ],
-            'typed-settings.cache.enabled' => false,
         ]);
 
         $user = User::create([
@@ -142,7 +152,6 @@ class SettingsBaseTest extends BaseTestCase
                 'complex' => ComplexSetting::class,
                 'simplex' => SimpleSetting::class,
             ],
-            'typed-settings.cache.enabled' => false,
         ]);
 
         $user->setSettings(function (SimpleSetting $simple, ComplexSetting $complex) {
@@ -185,6 +194,27 @@ class SettingsBaseTest extends BaseTestCase
         $encrypted = new EncryptedSetting($this->getUser());
         $this->assertEquals('abc', $encrypted->secret);
         $this->assertEquals(['x','y','z'], $encrypted->list);
+    }
+
+    public function test_it_validates_against_rules_if_provided() : void
+    {
+        $user = $this->getUser();
+
+        config([
+            'typed-settings.morph' => [
+                'simplex-with-rule' => SimpleSettingWithRule::class,
+            ],
+        ]);
+
+        try {
+            $user->setSettings(function (SimpleSettingWithRule $simple) {
+                $simple->favoriteColor = 'blue';
+            });
+        } catch (ValidationException $exception) {
+            $this->assertContains('color does not match', $exception->errors()['favoriteColor']);
+
+            $this->assertFalse(Arr::has($exception->errors(), 'leastFavoriteColor'));
+        }
     }
 
     protected function getUser(): User

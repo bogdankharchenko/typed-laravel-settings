@@ -12,10 +12,13 @@ abstract class BaseSettings implements Arrayable
 {
     use CachesSettings;
     use EncryptsSettings;
+    use ValidatesSettings;
 
     protected Model $model;
 
     protected array $defaultSettings = [];
+
+    protected array $preparedPayload = [];
 
     protected bool $wasRecentlySaved = false;
 
@@ -29,17 +32,23 @@ abstract class BaseSettings implements Arrayable
 
         $this->encryptionSetup();
 
-        $this->defaultSettings = $this->getReflectedProperties();
+        $this->validatorSetup();
+
+        $this->defaultSettings = $this->toArray();
 
         $this->loadSettings();
     }
 
     public function saveSettings(): void
     {
+        $this->preparedPayload = $this->toArray();
+
+        $this->validator->validate($this);
+
         $this->model->settings()->updateOrCreate([
             'class' => ClassMorphMap::getKeyFromClass($this),
         ], [
-            'payload' => $this->getReflectedProperties(),
+            'payload' => $this->preparedPayload,
         ]);
 
         $this->wasRecentlySaved = true;

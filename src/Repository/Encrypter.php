@@ -2,10 +2,10 @@
 
 namespace BogdanKharchenko\Settings\Repository;
 
-use BogdanKharchenko\Settings\Contracts\SettingEncrypterInterface;
+use BogdanKharchenko\Settings\Contracts\EncrypterInterface;
 use Illuminate\Support\Facades\Crypt;
 
-class Encrypter implements SettingEncrypterInterface
+class Encrypter implements EncrypterInterface
 {
     public function encrypt($value): string
     {
