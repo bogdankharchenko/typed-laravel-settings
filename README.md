@@ -93,7 +93,7 @@ $settings->favoriteColor // returns blue
 ```
 
 #### Setting Value Encryption
-You may decide to encrypt/decrypt sensitive settings such as secrets.   You should specify a `protected array $encrypted` with a list of properties to encrypt/decrypt. Data will be encrypted in the DB, and decrypted when retrieved.
+You may decide to encrypt/decrypt sensitive settings such as secrets.   You should specify a `protected array $encrypted` with a list of properties to encrypt/decrypt. Data will be encrypted into the database, and decrypted when retrieved.
 ```php
 use BogdanKharchenko\Settings\BaseSettings;
 
@@ -113,8 +113,33 @@ class UserSettings extends BaseSettings
     ];
 }
 ```
+The default encrypter is `BogdanKharchenko\Settings\Repository\Encrypter` but you may choose to implement your own encryption strategy by implementing `BogdanKharchenko\Settings\Contracts\EncrypterInterface` and changing the config.
 
-The default encrypter is `BogdanKharchenko\Settings\Repository\Encrypter` but you may choose to implement your own encryption strategy by implementing `BogdanKharchenko\Settings\Contracts\SettingEncrypterInterface` and changing the config.
+#### Validation
+You can define validation rules in your custom `Settings` class, in the same way as you would in `FormRequests` using the `rules()` and `messages()` methods. These rules will be triggered immediately before attempting to persist the data into the database.
+```php
+class SimpleSettingWithRule extends BaseSettings
+{
+    public string $favoriteColor = 'red';
+
+    // Optional
+    public function rules()
+    {
+        return [
+            'favoriteColor' => ['required', Rule::in(['red', 'green'])],
+        ];
+    }
+
+    // Optional 
+    public function messages()
+    {
+        return [
+            'favoriteColor.in' => 'color does not match',
+        ];
+    }
+}
+```
+Validation is optional, as you may choose to do this in other parts of your app.  You can also customize the validator by implementing the `BogdanKharchenko\Settings\Contracts\ValidatorInterface` and changing the `validator` config.
 
 #### Morph Map & Caching
 Similarly to morph map for Eloquent, it is a good idea to allow your Setting be more flexible to restructuring without touching your database.
@@ -132,6 +157,7 @@ return [
     ],
     
    'encrypter' => \BogdanKharchenko\Settings\Repository\Encrypter::class,
+   'validator' => \BogdanKharchenko\Settings\Repository\Validator::class,
 ];
 ```
 
