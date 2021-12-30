@@ -2,7 +2,7 @@
   "name": "bogdankharchenko/typed-laravel-settings",
   "description": "Strongly typed laravel settings.",
   "type": "library",
-  "version": "0.5",
+  "version": "0.6",
   "license": "MIT",
   "require": {
     "php": "^7.4|^8.0",
