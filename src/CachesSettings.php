@@ -2,52 +2,19 @@
 
 namespace BogdanKharchenko\Settings;
 
-use Closure;
-use Illuminate\Contracts\Cache\Repository;
-use Illuminate\Support\Facades\Cache;
+use BogdanKharchenko\Settings\Contracts\CacheInterface;
 
 trait CachesSettings
 {
-    protected function cacheEnabled(): bool
-    {
-        return (bool)config('typed-settings.cache.enabled');
-    }
+    protected CacheInterface $cache;
 
-    protected function cacheStore(): ?string
+    protected function cacheSetup() : void
     {
-        return config('typed-settings.cache.store');
-    }
+        /** @var CacheInterface $cacher */
+        $cacher = app('typed-settings.cacher');
 
-    protected function cacheSeconds(): int
-    {
-        return config('typed-settings.cache.seconds');
-    }
+        $cacher->init($this);
 
-    protected function cacheKey(): string
-    {
-        return implode('-', [
-            $this->model->getMorphClass(),
-            $this->model->getKey(),
-            get_class($this),
-        ]);
-    }
-
-    protected function forgetCurrentModelSetting(): void
-    {
-        $this->cache()->forget($this->cacheKey());
-    }
-
-    protected function cache(): Repository
-    {
-        return Cache::store($this->cacheStore());
-    }
-
-    protected function cacheSettings(Closure $closure)
-    {
-        if ($this->cacheEnabled()) {
-            return $this->cache()->remember($this->cacheKey(), $this->cacheSeconds(), fn () => $closure());
-        }
-
-        return $closure();
+        $this->cache = $cacher;
     }
 }

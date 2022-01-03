@@ -34,6 +34,8 @@ abstract class BaseSettings implements Arrayable
 
         $this->validatorSetup();
 
+        $this->cacheSetup();
+
         $this->defaultSettings = $this->toArray();
 
         $this->loadSettings();
@@ -53,12 +55,12 @@ abstract class BaseSettings implements Arrayable
 
         $this->wasRecentlySaved = true;
 
-        $this->forgetCurrentModelSetting();
+        $this->cache->forgetCurrentSettings();
     }
 
     protected function loadSettings(): void
     {
-        $settings = $this->cacheSettings(function () {
+        $settings = $this->cache->cacheSettings(function () {
             return $this->model->settings()->where(
                 'class',
                 ClassMorphMap::getKeyFromClass($this)
