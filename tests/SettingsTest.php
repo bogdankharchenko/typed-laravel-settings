@@ -22,29 +22,28 @@ class SettingsBaseTest extends BaseTestCase
 
         config([
             'typed-settings.cache.enabled' => false,
+            'typed-settings.morph' => [
+                'simplex-with-rule' => SimpleSettingWithRule::class,
+                'complex' => ComplexSetting::class,
+                'simple' => SimpleSetting::class,
+            ],
         ]);
     }
 
-    public function test_complex_data_types(): void
+    public function test_complex_data_types() : void
     {
-        config([
-            'typed-settings.morph' => [
-                'complex' => ComplexSetting::class,
-            ],
-        ]);
-
         $complex = new ComplexSetting($this->getUser());
 
         $this->assertEquals('apple', $complex->filling);
         $this->assertEquals(3.14, $complex->pi);
-        $this->assertEquals([ 'apple', 'flour', 'egg' ], $complex->ingredients);
+        $this->assertEquals(['apple', 'flour', 'egg'], $complex->ingredients);
         $this->assertEquals(2, $complex->totalPies);
         $this->assertFalse($complex->isReady);
 
         // Update the data.
         $complex->filling = 'cherry';
         $complex->pi = 22.22;
-        $complex->ingredients = [ 'cherry', 'eggs', 'butter' ];
+        $complex->ingredients = ['cherry', 'eggs', 'butter'];
         $complex->totalPies = 145;
         $complex->isReady = true;
         $complex->saveSettings();
@@ -53,7 +52,7 @@ class SettingsBaseTest extends BaseTestCase
         $complex = new ComplexSetting($this->getUser());
         $this->assertEquals('cherry', $complex->filling);
         $this->assertEquals(22.22, $complex->pi);
-        $this->assertEquals([ 'cherry', 'eggs', 'butter' ], $complex->ingredients);
+        $this->assertEquals(['cherry', 'eggs', 'butter'], $complex->ingredients);
         $this->assertEquals(145, $complex->totalPies);
         $this->assertTrue($complex->isReady);
 
@@ -64,14 +63,8 @@ class SettingsBaseTest extends BaseTestCase
         $this->assertEquals('apple', $complex->getDefaultSettings()['filling']);
     }
 
-    public function test_where_setting_scope(): void
+    public function test_where_setting_scope() : void
     {
-        config([
-            'typed-settings.morph' => [
-                'complex' => ComplexSetting::class,
-            ],
-        ]);
-
         $user = User::create([
             'name' => 'Alex',
             'email' => 'aaa',
@@ -92,14 +85,12 @@ class SettingsBaseTest extends BaseTestCase
         $this->assertTrue($user->exists());
     }
 
-    public function test_settings_can_be_set_with_closure(): void
+    public function test_settings_can_be_set_with_closure() : void
     {
-        config([ 'typed-settings.morph' => [ 'complex' => ComplexSetting::class ] ]);
-
-        $this->getUser()->setSettings(function (ComplexSetting $complex) {
+        $this->getUser()->setSettings(function(ComplexSetting $complex) {
             $complex->filling = 'cherry';
             $complex->pi = 22.22;
-            $complex->ingredients = [ 'cherry', 'eggs', 'butter' ];
+            $complex->ingredients = ['cherry', 'eggs', 'butter'];
             $complex->totalPies = 145;
             $complex->isReady = true;
         });
@@ -107,14 +98,13 @@ class SettingsBaseTest extends BaseTestCase
         $complex = new ComplexSetting($this->getUser());
         $this->assertEquals('cherry', $complex->filling);
         $this->assertEquals(22.22, $complex->pi);
-        $this->assertEquals([ 'cherry', 'eggs', 'butter' ], $complex->ingredients);
+        $this->assertEquals(['cherry', 'eggs', 'butter'], $complex->ingredients);
         $this->assertEquals(145, $complex->totalPies);
         $this->assertTrue($complex->isReady);
     }
 
-    public function test_settings_are_cachable_and_cache_is_cleared_when_settings_are_updated(): void
+    public function test_settings_are_cachable_and_cache_is_cleared_when_settings_are_updated() : void
     {
-        config([ 'typed-settings.morph' => [ 'complex' => ComplexSetting::class ] ]);
         config([
             'typed-settings.cache' => [
                 'enabled' => true,
@@ -125,36 +115,48 @@ class SettingsBaseTest extends BaseTestCase
 
         $user = $this->getUser();
 
-        $key = implode('-', [
+        $complexKey = implode('-', [
             $user->getMorphClass(),
             $user->getKey(),
             ComplexSetting::class,
         ]);
 
+        $simpleKey = implode('-', [
+            $user->getMorphClass(),
+            $user->getKey(),
+            SimpleSetting::class,
+        ]);
+
         // Test
-        $user->getSettings(ComplexSetting::class);
+        $complex = new ComplexSetting($user);
+        $simple = new SimpleSetting($user);
 
-        $this->assertTrue(Cache::store('array')->has($key));
+        // Keys Exist when loaded
+        $this->assertTrue(Cache::store('array')->has($complexKey));
+        $this->assertTrue(Cache::store('array')->has($simpleKey));
 
-        $user->setSettings(function (ComplexSetting $complex) {
+        $user->setSettings(function(ComplexSetting $complex, SimpleSetting $simple) {
             $complex->filling = 'cherry';
+            $simple->favoriteColor = 'blue';
         });
 
-        $this->assertFalse(Cache::store('array')->has($key));
+        // The Cache was cleared.
+        $this->assertFalse(Cache::store('array')->has($complexKey));
+        $this->assertFalse(Cache::store('array')->has($simpleKey));
+
+        // Check if the setting has changed. -- refresh
+        $complex = new ComplexSetting($user);
+        $simple = new SimpleSetting($user);
+
+        $this->assertEquals('cherry', $complex->filling);
+        $this->assertEquals('blue', $simple->favoriteColor);
     }
 
-    public function test_you_may_pass_multiple_closures_when_setting(): void
+    public function test_you_may_pass_multiple_closures_when_setting() : void
     {
         $user = $this->getUser();
 
-        config([
-            'typed-settings.morph' => [
-                'complex' => ComplexSetting::class,
-                'simplex' => SimpleSetting::class,
-            ],
-        ]);
-
-        $user->setSettings(function (SimpleSetting $simple, ComplexSetting $complex) {
+        $user->setSettings(function(SimpleSetting $simple, ComplexSetting $complex) {
             $simple->favoriteColor = 'blue';
             $complex->filling = 'cherry';
         });
@@ -178,7 +180,7 @@ class SettingsBaseTest extends BaseTestCase
 
         // Sanity Check
         $this->assertNull($encrypted->secret);
-        $this->assertSame(['a','b','c'], $encrypted->list);
+        $this->assertSame(['a', 'b', 'c'], $encrypted->list);
 
         $encrypted->secret = 'abc';
         $encrypted->list = ['x', 'y', 'z'];
@@ -188,26 +190,20 @@ class SettingsBaseTest extends BaseTestCase
 
         $setting = Setting::query()->first();
         $this->assertEquals('abc', $defaultEncrypter->decrypt($setting->payload['secret']));
-        $this->assertSame(['x','y','z'], $defaultEncrypter->decrypt($setting->payload['list']));
+        $this->assertSame(['x', 'y', 'z'], $defaultEncrypter->decrypt($setting->payload['list']));
 
         // Fresh Settings
         $encrypted = new EncryptedSetting($this->getUser());
         $this->assertEquals('abc', $encrypted->secret);
-        $this->assertEquals(['x','y','z'], $encrypted->list);
+        $this->assertEquals(['x', 'y', 'z'], $encrypted->list);
     }
 
     public function test_it_validates_against_rules_if_provided() : void
     {
         $user = $this->getUser();
 
-        config([
-            'typed-settings.morph' => [
-                'simplex-with-rule' => SimpleSettingWithRule::class,
-            ],
-        ]);
-
         try {
-            $user->setSettings(function (SimpleSettingWithRule $simple) {
+            $user->setSettings(function(SimpleSettingWithRule $simple) {
                 $simple->favoriteColor = 'blue';
             });
         } catch (ValidationException $exception) {
@@ -219,7 +215,7 @@ class SettingsBaseTest extends BaseTestCase
 
     public function test_you_can_get_the_property_name_by_calling_byName_function() : void
     {
-        config([ 'typed-settings.morph' => [ 'complex' => ComplexSetting::class ] ]);
+        config(['typed-settings.morph' => ['complex' => ComplexSetting::class]]);
 
         $complex = new ComplexSetting($this->getUser());
 
@@ -228,7 +224,7 @@ class SettingsBaseTest extends BaseTestCase
         $this->assertEquals('isReady', $complex->toName()->isReady);
     }
 
-    protected function getUser(): User
+    protected function getUser() : User
     {
         $user = new User();
         $user->id = 1;
@@ -242,4 +238,9 @@ class User extends Model
     use HasSettings;
 
     protected $guarded = [];
+
+    public function complex() : ComplexSetting
+    {
+        return new ComplexSetting($this);
+    }
 }

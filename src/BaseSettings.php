@@ -60,16 +60,20 @@ abstract class BaseSettings implements Arrayable
 
         $this->wasRecentlySaved = true;
 
-        $this->cache->forgetCurrentSettings();
+        $this->cache
+            ->for($this)
+            ->forgetCurrentSettings();
     }
 
     protected function loadSettings(): void
     {
-        $settings = $this->cache->cacheSettings(function () {
-            return $this->model->settings()->where(
-                'class',
-                ClassMorphMap::getKeyFromClass($this)
-            )->first()->payload ?? [];
+        $settings = $this->cache
+            ->for($this)
+            ->cacheSettings(function () {
+                return $this->model->settings()->where(
+                    'class',
+                    ClassMorphMap::getKeyFromClass($this)
+                )->first()->payload ?? [];
         });
 
         $this->fillProperties($settings);

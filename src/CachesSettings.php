@@ -13,8 +13,6 @@ trait CachesSettings
         /** @var CacheInterface $cacher */
         $cacher = app('typed-settings.cacher');
 
-        $cacher->init($this);
-
         $this->cache = $cacher;
     }
 }

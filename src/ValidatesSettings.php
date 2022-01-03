@@ -8,7 +8,7 @@ trait ValidatesSettings
 {
     protected ValidatorInterface $validator;
 
-    public function validatorSetup(): void
+    protected function validatorSetup(): void
     {
         $this->validator = app('typed-settings.validator');
     }

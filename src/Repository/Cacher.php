@@ -10,15 +10,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cacher implements CacheInterface
 {
-    protected BaseSettings $settings;
+    protected ?BaseSettings $settings;
 
-    protected Model $model;
+    protected ?Model $model;
 
-    public function init(BaseSettings $settings) : void
+    public function for(BaseSettings $settings) : self
     {
         $this->settings = $settings;
 
         $this->model = $settings->getModel();
+
+        return $this;
     }
 
     public function cacheSettings(Closure $closure)
