@@ -22,7 +22,7 @@ abstract class BaseSettings implements Arrayable
 
     protected bool $wasRecentlySaved = false;
 
-    /** @var parent $temporaryNames */
+    /** @var parent */
     protected $temporaryNames;
 
     public function __construct(Model $model)
@@ -138,6 +138,7 @@ abstract class BaseSettings implements Arrayable
 
     private function setupTemporaryName()
     {
-        return $this->temporaryNames ??= new class {};
+        return $this->temporaryNames ??= new class {
+        };
     }
 }
