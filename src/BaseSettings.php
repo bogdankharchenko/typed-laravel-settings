@@ -74,7 +74,7 @@ abstract class BaseSettings implements Arrayable
                     'class',
                     ClassMorphMap::getKeyFromClass($this)
                 )->first()->payload ?? [];
-        });
+            });
 
         $this->fillProperties($settings);
     }

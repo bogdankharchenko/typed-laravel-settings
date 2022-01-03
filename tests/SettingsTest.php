@@ -87,7 +87,7 @@ class SettingsBaseTest extends BaseTestCase
 
     public function test_settings_can_be_set_with_closure() : void
     {
-        $this->getUser()->setSettings(function(ComplexSetting $complex) {
+        $this->getUser()->setSettings(function (ComplexSetting $complex) {
             $complex->filling = 'cherry';
             $complex->pi = 22.22;
             $complex->ingredients = ['cherry', 'eggs', 'butter'];
@@ -135,7 +135,7 @@ class SettingsBaseTest extends BaseTestCase
         $this->assertTrue(Cache::store('array')->has($complexKey));
         $this->assertTrue(Cache::store('array')->has($simpleKey));
 
-        $user->setSettings(function(ComplexSetting $complex, SimpleSetting $simple) {
+        $user->setSettings(function (ComplexSetting $complex, SimpleSetting $simple) {
             $complex->filling = 'cherry';
             $simple->favoriteColor = 'blue';
         });
@@ -156,7 +156,7 @@ class SettingsBaseTest extends BaseTestCase
     {
         $user = $this->getUser();
 
-        $user->setSettings(function(SimpleSetting $simple, ComplexSetting $complex) {
+        $user->setSettings(function (SimpleSetting $simple, ComplexSetting $complex) {
             $simple->favoriteColor = 'blue';
             $complex->filling = 'cherry';
         });
@@ -203,7 +203,7 @@ class SettingsBaseTest extends BaseTestCase
         $user = $this->getUser();
 
         try {
-            $user->setSettings(function(SimpleSettingWithRule $simple) {
+            $user->setSettings(function (SimpleSettingWithRule $simple) {
                 $simple->favoriteColor = 'blue';
             });
         } catch (ValidationException $exception) {
