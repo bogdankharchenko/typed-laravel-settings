@@ -24,7 +24,7 @@ class Cacher implements CacheInterface
     public function cacheSettings(Closure $closure)
     {
         if ($this->cacheEnabled()) {
-            return $this->cache()->remember($this->cacheKey(), $this->cacheSeconds(), fn() => $closure());
+            return $this->cache()->remember($this->cacheKey(), $this->cacheSeconds(), fn () => $closure());
         }
 
         return $closure();
