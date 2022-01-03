@@ -7,7 +7,7 @@ use Closure;
 
 interface CacheInterface
 {
-    public function init(BaseSettings $settings) : void;
+    public function for(BaseSettings $settings) : self;
 
     public function cacheSettings(Closure $closure);
 
