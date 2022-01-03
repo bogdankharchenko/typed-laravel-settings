@@ -127,6 +127,9 @@ class SimpleSettingWithRule extends BaseSettings
     {
         return [
             'favoriteColor' => ['required', Rule::in(['red', 'green'])],
+            
+            // Or
+            $this->toName()->favoriteColor => ['required', Rule::in(['red', 'green'])],
         ];
     }
 

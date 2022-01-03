@@ -22,6 +22,9 @@ abstract class BaseSettings implements Arrayable
 
     protected bool $wasRecentlySaved = false;
 
+    /** @var parent */
+    protected $temporaryNames;
+
     public function __construct(Model $model)
     {
         $this->model = $model;
@@ -37,6 +40,8 @@ abstract class BaseSettings implements Arrayable
         $this->cacheSetup();
 
         $this->defaultSettings = $this->toArray();
+
+        $this->setupTemporaryName();
 
         $this->loadSettings();
     }
@@ -89,6 +94,8 @@ abstract class BaseSettings implements Arrayable
 
     protected function fillProperties(array $properties = []): self
     {
+        $properties = array_merge($this->toArray(), $properties);
+
         foreach ($properties as $name => $value) {
             if (array_key_exists($name, $this->defaultSettings)) {
                 if ($this->isUsingEncryption($name)) {
@@ -96,6 +103,8 @@ abstract class BaseSettings implements Arrayable
                 }
 
                 $this->{$name} = $value;
+
+                $this->temporaryNames->{$name} = $name;
             }
         }
 
@@ -120,5 +129,16 @@ abstract class BaseSettings implements Arrayable
     public function getDefaultSettings(): array
     {
         return $this->defaultSettings;
+    }
+
+    public function toName()
+    {
+        return $this->temporaryNames;
+    }
+
+    private function setupTemporaryName()
+    {
+        return $this->temporaryNames ??= new class {
+        };
     }
 }
