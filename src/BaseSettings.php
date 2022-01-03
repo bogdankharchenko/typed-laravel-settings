@@ -94,18 +94,16 @@ abstract class BaseSettings implements Arrayable
 
     protected function fillProperties(array $properties = []): self
     {
-        $properties = array_merge($this->toArray(), $properties);
+        $properties = array_merge($this->defaultSettings, $properties);
 
         foreach ($properties as $name => $value) {
-            if (array_key_exists($name, $this->defaultSettings)) {
-                if ($this->isUsingEncryption($name)) {
-                    $value = $this->encrypter->decrypt($value);
-                }
-
-                $this->{$name} = $value;
-
-                $this->temporaryNames->{$name} = $name;
+            if ($this->isUsingEncryption($name)) {
+                $value = $this->encrypter->decrypt($value);
             }
+
+            $this->{$name} = $value;
+
+            $this->temporaryNames->{$name} = $name;
         }
 
         return $this;
