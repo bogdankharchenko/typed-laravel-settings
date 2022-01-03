@@ -217,6 +217,17 @@ class SettingsBaseTest extends BaseTestCase
         }
     }
 
+    public function test_you_can_get_the_property_name_by_calling_byName_function() : void
+    {
+        config([ 'typed-settings.morph' => [ 'complex' => ComplexSetting::class ] ]);
+
+        $complex = new ComplexSetting($this->getUser());
+
+        $this->assertEquals('filling', $complex->toName()->filling);
+        $this->assertEquals('pi', $complex->toName()->pi);
+        $this->assertEquals('isReady', $complex->toName()->isReady);
+    }
+
     protected function getUser(): User
     {
         $user = new User();
