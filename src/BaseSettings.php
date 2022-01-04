@@ -70,11 +70,11 @@ abstract class BaseSettings implements Arrayable
     {
         $settings = $this->cache
             ->for($this)
-            ->cacheSettings(function() {
+            ->cacheSettings(function () {
                 return $this->model->settings()->where(
-                        'class',
-                        ClassMorphMap::getKeyFromClass($this)
-                    )->first()->payload ?? [];
+                    'class',
+                    ClassMorphMap::getKeyFromClass($this)
+                )->first()->payload ?? [];
             });
 
         $this->fillProperties($settings);
@@ -84,7 +84,7 @@ abstract class BaseSettings implements Arrayable
     {
         $properties = new Collection((new ReflectionClass($this))->getProperties(ReflectionProperty::IS_PUBLIC));
 
-        return $properties->mapWithKeys(function(ReflectionProperty $property) {
+        return $properties->mapWithKeys(function (ReflectionProperty $property) {
             $name = $property->getName();
             $value = $property->getValue($this);
 
