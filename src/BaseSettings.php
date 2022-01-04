@@ -5,6 +5,7 @@ namespace BogdanKharchenko\Settings;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Fluent;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -22,16 +23,12 @@ abstract class BaseSettings implements Arrayable
 
     protected bool $wasRecentlySaved = false;
 
-    /** @var parent */
-    protected $temporaryNames;
+    /** @var parent|Fluent */
+    protected $fluentNames;
 
     public function __construct(Model $model)
     {
         $this->model = $model;
-
-        if (method_exists($this, 'inheritSettings')) {
-            $this->inheritSettings();
-        }
 
         $this->encryptionSetup();
 
@@ -43,10 +40,14 @@ abstract class BaseSettings implements Arrayable
 
         $this->setupTemporaryName();
 
+        if (method_exists($this, 'inheritSettings')) {
+            $this->inheritSettings();
+        }
+
         $this->loadSettings();
     }
 
-    public function saveSettings(): void
+    public function saveSettings() : void
     {
         $this->preparedPayload = $this->toArray();
 
@@ -65,25 +66,25 @@ abstract class BaseSettings implements Arrayable
             ->forgetCurrentSettings();
     }
 
-    protected function loadSettings(): void
+    protected function loadSettings() : void
     {
         $settings = $this->cache
             ->for($this)
-            ->cacheSettings(function () {
+            ->cacheSettings(function() {
                 return $this->model->settings()->where(
-                    'class',
-                    ClassMorphMap::getKeyFromClass($this)
-                )->first()->payload ?? [];
+                        'class',
+                        ClassMorphMap::getKeyFromClass($this)
+                    )->first()->payload ?? [];
             });
 
         $this->fillProperties($settings);
     }
 
-    protected function getReflectedProperties(): array
+    protected function getReflectedProperties() : array
     {
         $properties = new Collection((new ReflectionClass($this))->getProperties(ReflectionProperty::IS_PUBLIC));
 
-        return $properties->mapWithKeys(function (ReflectionProperty $property) {
+        return $properties->mapWithKeys(function(ReflectionProperty $property) {
             $name = $property->getName();
             $value = $property->getValue($this);
 
@@ -91,12 +92,12 @@ abstract class BaseSettings implements Arrayable
                 $value = $this->encrypter->encrypt($value);
             }
 
-            return [ $name => $value ];
+            return [$name => $value];
         })
             ->toArray();
     }
 
-    protected function fillProperties(array $properties = []): self
+    protected function fillProperties(array $properties = []) : self
     {
         $properties = array_merge($this->defaultSettings, $properties);
 
@@ -106,41 +107,41 @@ abstract class BaseSettings implements Arrayable
             }
 
             $this->{$name} = $value;
-
-            $this->temporaryNames->{$name} = $name;
         }
 
         return $this;
     }
 
-    public function wasRecentlySaved(): bool
+    public function wasRecentlySaved() : bool
     {
         return $this->wasRecentlySaved;
     }
 
-    public function getModel(): Model
+    public function getModel() : Model
     {
         return $this->model;
     }
 
-    public function toArray(): array
+    public function toArray() : array
     {
         return $this->getReflectedProperties();
     }
 
-    public function getDefaultSettings(): array
+    public function getDefaultSettings() : array
     {
         return $this->defaultSettings;
     }
 
     public function toName()
     {
-        return $this->temporaryNames;
+        return $this->fluentNames;
     }
 
     private function setupTemporaryName()
     {
-        return $this->temporaryNames ??= new class {
-        };
+        $keys = array_keys($this->defaultSettings);
+        $combined = array_combine($keys, $keys);
+
+        return $this->fluentNames ??= new Fluent($combined);
     }
 }
