@@ -23,7 +23,7 @@ abstract class BaseSettings implements Arrayable
 
     protected bool $wasRecentlySaved = false;
 
-    /** @var parent|Fluent */
+    /** @var static */
     protected $fluentNames;
 
     public function __construct(Model $model)
@@ -132,6 +132,9 @@ abstract class BaseSettings implements Arrayable
         return $this->defaultSettings;
     }
 
+    /**
+     * @return static
+     **/
     public function toName()
     {
         return $this->fluentNames;
