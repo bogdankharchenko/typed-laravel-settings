@@ -30,6 +30,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Install
+        run: composer install
+
       - name: Execute tests
         run: vendor/bin/phpunit
         env:
