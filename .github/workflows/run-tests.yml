@@ -1,23 +1,23 @@
 name: run-tests
 
 on: [ push, pull_request ]
-
+  
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    container:
+      image: docker://scriptor2k2/ci:7.4
 
     services:
       redis:
         image: redis
-        ports:
-          - 6379/tcp
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     strategy:
       fail-fast: true
       matrix:
-        os: [ ubuntu-latest ]
-        php: [ 8.1, 8.0, 7.4 ]
+        os: [ self-hosted ]
+        php: [ 7.4 ]
         laravel: [ 8.* ]
         dependency-version: [ prefer-stable ]
         include:
@@ -30,13 +30,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, redis
-          coverage: pcov
-
       - name: Install dependencies
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
@@ -45,9 +38,10 @@ jobs:
       - name: Execute tests
         run: vendor/bin/phpunit --coverage-clover ./clover.xml
         env:
-          REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
+          REDIS_PORT: 6379
+          REDIS_HOST: redis
 
       - uses: codecov/codecov-action@v2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: ./clover.xml
