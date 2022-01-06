@@ -41,7 +41,7 @@ jobs:
         run: vendor/bin/phpunit --coverage-clover ./clover.xml
         env:
           REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
-          REDIS_HOST: localhost
+          REDIS_HOST: redis
 
       - uses: codecov/codecov-action@v2
         with:
