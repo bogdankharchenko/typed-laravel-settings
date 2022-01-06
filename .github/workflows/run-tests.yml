@@ -3,7 +3,7 @@ name: run-tests
 on: [ push, pull_request ]
 
 env:
-  REDIS_HOST: redis
+  REDIS_HOST: 127.0.0.1
   
 jobs:
   test:
