@@ -11,8 +11,6 @@ jobs:
     services:
       redis:
         image: redis
-        ports:
-          - 6379/tcp
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     strategy:
@@ -40,10 +38,10 @@ jobs:
       - name: Execute tests
         run: vendor/bin/phpunit --coverage-clover ./clover.xml
         env:
-          REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
-          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: 6379
+          REDIS_HOST: redis
 
       - uses: codecov/codecov-action@v2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: ./clover.xml
