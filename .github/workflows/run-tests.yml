@@ -30,18 +30,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
-
       - name: Execute tests
-        run: vendor/bin/phpunit --coverage-clover ./clover.xml
+        run: vendor/bin/phpunit
         env:
           REDIS_PORT: 6379
           REDIS_HOST: redis
-
-      - uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./clover.xml
