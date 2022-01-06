@@ -6,7 +6,7 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     container:
-      image: docker://napp/php-ci:7.4-fpm
+      image: docker://scriptor2k2/ci:7.4
 
     services:
       redis:
