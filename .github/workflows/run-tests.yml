@@ -1,9 +1,6 @@
 name: run-tests
 
 on: [ push, pull_request ]
-
-env:
-  REDIS_HOST: 127.0.0.1
   
 jobs:
   test:
@@ -44,6 +41,7 @@ jobs:
         run: vendor/bin/phpunit --coverage-clover ./clover.xml
         env:
           REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
+          REDIS_HOST: localhost
 
       - uses: codecov/codecov-action@v2
         with:
