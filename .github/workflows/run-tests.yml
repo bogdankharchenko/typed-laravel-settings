@@ -26,12 +26,12 @@ jobs:
       - name: set env
         run: | 
           - echo "ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
-          - echo "AWS_USER=docker_username_${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
-          - echo "AWS_PASSWORD=docker_password_${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
+          # - echo "AWS_USER=docker_username_${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
+          # - echo "AWS_PASSWORD=docker_password_${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
       
   test:
     needs: aws
-    runs-on: ${{ matrix.os }}
+    runs-on: self-hosted
     container:
       image: 244371325961.dkr.ecr.us-east-1.amazonaws.com/php:7.4
       credentials:
