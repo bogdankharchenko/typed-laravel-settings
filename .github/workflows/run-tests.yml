@@ -28,13 +28,13 @@ jobs:
           - echo "ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}" > $GITHUB_ENV
           - echo "AWS_USER=docker_username_${{ steps.login-ecr.outputs.registry }}" > $GITHUB_ENV
           - echo "AWS_PASSWORD=docker_password_${{ steps.login-ecr.outputs.registry }}" > $GITHUB_ENV
-          - echo ${{ env.AWS_USER }}
 
       
   test:
+    needs: aws
     runs-on: ${{ matrix.os }}
     container:
-      image: docker://scriptor2k2/ci:7.4
+      image: ${{ env.ECR_REGISTRY }}
       credentials:
        username: ${{ env.AWS_USER }}
        password: ${{ env.AWS_PASSWORD }}
