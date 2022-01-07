@@ -34,7 +34,7 @@ jobs:
     needs: aws
     runs-on: ${{ matrix.os }}
     container:
-      image: docker://${{ env.ECR_REGISTRY }}
+      image: docker://scriptor2k2/ci:7.4
       credentials:
        username: ${{ env.AWS_USER }}
        password: ${{ env.AWS_PASSWORD }}
