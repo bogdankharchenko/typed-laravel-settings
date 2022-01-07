@@ -1,12 +1,43 @@
 name: run-tests
 
 on: [ push, pull_request ]
-  
+
+env:
+  ECR_REGISTRY: ''
+  AWS_USER: AWS
+
 jobs:
+
+  aws:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        
+      - name: set env
+        run: | 
+          - echo "ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >>> $GITHUB_ENV
+          - echo "AWS_USER=docker_username_${{ steps.login-ecr.outputs.registry }}" >>> $GITHUB_ENV
+          - echo "AWS_PASSWORD=docker_password_${{ steps.login-ecr.outputs.registry }}" >>> $GITHUB_ENV
+          - echo ${{ env.AWS_USER }}
+
+      
   test:
     runs-on: ${{ matrix.os }}
     container:
       image: docker://scriptor2k2/ci:7.4
+      credentials:
+       username: ${{ env.AWS_USER }}
+       password: ${{ env.AWS_PASSWORD }}
 
     services:
       redis:
