@@ -27,6 +27,11 @@ class BaseTestCase extends TestCase
             'driver' => 'array',
             'connection' => 'cache',
         ]);
+
+        // Force the package's cacher onto the in-memory array store so the
+        // test suite doesn't reach out to Redis (the workflow no longer
+        // provisions a Redis service).
+        $app['config']->set('typed-settings.cache.store', 'array');
     }
 
     protected function defineDatabaseMigrations()
