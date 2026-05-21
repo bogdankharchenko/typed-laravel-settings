@@ -1,0 +1,25 @@
+tests/Fixtures/TypedSetting.php
+  s_c6ca0f2cd60bd3::t_c82629ab9b3f57 1-19
+tests/SettingsTest.php
+  s_c6ca0f2cd60bd3::t_d5a7ae65bd8f00 230-266
+  s_c6ca0f2cd60bd3::t_a136008a3e5f07 9,13-14
+src/BaseSettings.php
+  s_c6ca0f2cd60bd3::t_27fdf88fa9ea17 5-6,12-13
+  s_c6ca0f2cd60bd3::t_f88ad07f72c119 113,119-194
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "197d688943f540e2b24ea6bce016919b4b7fd0d5",
+  "prompts": {},
+  "sessions": {
+    "s_c6ca0f2cd60bd3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8d88827b-7ea8-427b-940e-ac2f6fd86d51",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Bogdan Kharchenko <scriptor@gmail.com>"
+    }
+  }
+}
