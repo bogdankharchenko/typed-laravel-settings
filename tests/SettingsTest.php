@@ -6,9 +6,12 @@ use BogdanKharchenko\Settings\Models\HasSettings;
 use BogdanKharchenko\Settings\Models\Setting;
 use BogdanKharchenko\Settings\Repository\Encrypter;
 use BogdanKharchenko\Settings\Tests\Fixtures\ComplexSetting;
+use BogdanKharchenko\Settings\Tests\Fixtures\DemoStatus;
 use BogdanKharchenko\Settings\Tests\Fixtures\EncryptedSetting;
 use BogdanKharchenko\Settings\Tests\Fixtures\SimpleSetting;
 use BogdanKharchenko\Settings\Tests\Fixtures\SimpleSettingWithRule;
+use BogdanKharchenko\Settings\Tests\Fixtures\TypedSetting;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
@@ -222,6 +225,43 @@ class SettingsTest extends BaseTestCase
         $this->assertEquals('filling', $complex->toName()->filling);
         $this->assertEquals('pi', $complex->toName()->pi);
         $this->assertEquals('isReady', $complex->toName()->isReady);
+    }
+
+    public function test_carbon_and_backed_enum_properties_round_trip() : void
+    {
+        config(['typed-settings.morph' => ['typed' => TypedSetting::class]]);
+
+        $user = $this->getUser();
+
+        $typed = new TypedSetting($user);
+        $typed->sentAt = CarbonImmutable::parse('2024-01-15T10:00:00+00:00');
+        $typed->status = DemoStatus::Active;
+        $typed->saveSettings();
+
+        // Cold reload — the JSON payload comes back as a string for the
+        // timestamp and a string for the enum. Auto-cast turns them back
+        // into the declared types so callers don't override fillProperties.
+        $reloaded = new TypedSetting($user);
+
+        $this->assertInstanceOf(CarbonImmutable::class, $reloaded->sentAt);
+        $this->assertTrue($reloaded->sentAt->equalTo('2024-01-15T10:00:00+00:00'));
+        $this->assertSame(DemoStatus::Active, $reloaded->status);
+    }
+
+    public function test_typed_null_properties_stay_null() : void
+    {
+        config(['typed-settings.morph' => ['typed' => TypedSetting::class]]);
+
+        $typed = new TypedSetting($this->getUser());
+
+        $this->assertNull($typed->sentAt);
+        $this->assertNull($typed->status);
+
+        $typed->saveSettings();
+
+        $reloaded = new TypedSetting($this->getUser());
+        $this->assertNull($reloaded->sentAt);
+        $this->assertNull($reloaded->status);
     }
 
     protected function getUser() : User
