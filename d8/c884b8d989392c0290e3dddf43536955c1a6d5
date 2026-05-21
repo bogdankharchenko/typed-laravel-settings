@@ -1,0 +1,19 @@
+tests/SettingsTest.php
+  s_c6ca0f2cd60bd3::t_42a1c2fc8c31e3 17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "d8c884b8d989392c0290e3dddf43536955c1a6d5",
+  "prompts": {},
+  "sessions": {
+    "s_c6ca0f2cd60bd3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8d88827b-7ea8-427b-940e-ac2f6fd86d51",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Bogdan Kharchenko <scriptor@gmail.com>"
+    }
+  }
+}
