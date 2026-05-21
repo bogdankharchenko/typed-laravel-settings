@@ -14,7 +14,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 
-class SettingsBaseTest extends BaseTestCase
+class SettingsTest extends BaseTestCase
 {
     protected function setUp() : void
     {
