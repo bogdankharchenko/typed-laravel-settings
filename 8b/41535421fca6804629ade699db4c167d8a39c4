@@ -1,0 +1,19 @@
+.github/workflows/run-tests.yml
+  s_c6ca0f2cd60bd3::t_21b9a332bacee1 13-14,17-22,28,34-35,43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "8b41535421fca6804629ade699db4c167d8a39c4",
+  "prompts": {},
+  "sessions": {
+    "s_c6ca0f2cd60bd3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8d88827b-7ea8-427b-940e-ac2f6fd86d51",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Bogdan Kharchenko <scriptor@gmail.com>"
+    }
+  }
+}
